@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ENUMS
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+enum ImageCategory {
+  WEDDING
+  PORTRAIT
+  COMMERCIAL
+  EVENTS
+  PERSONAL
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELED
+}
+
+enum ProductType {
+  DIGITAL_DOWNLOAD
+  PRESET
+  COURSE
+  PRINT
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+// MODELS
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password_hash String?   
+  role          Role      @default(CLIENT)
+  createdAt     DateTime  @default(now())
+  
+  bookings      Booking[]
+  orders        Order[]
+}
+
+model PortfolioImage {
+  id             String        @id @default(cuid())
+  cloudinaryUrl  String
+  publicId       String        // Needed to delete the image from Cloudinary later
+  title          String?
+  category       ImageCategory
+  isFeatured     Boolean       @default(false)
+  sortOrder      Int           @default(0)
+  createdAt      DateTime      @default(now())
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  serviceType String
+  startTime   DateTime
+  endTime     DateTime
+  status      BookingStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime      @default(now())
+}
+
+model Product {
+  id           String      @id @default(cuid())
+  name         String
+  description  String?
+  price        Int         // Stored in cents (e.g., 1500 = $15.00)
+  productType  ProductType
+  imageUrl     String?
+  downloadLink String?     // Hidden until purchased
+  createdAt    DateTime    @default(now())
+  
+  orderItems   OrderItem[]
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  stripeSessionId String?     @unique
+  totalAmount     Int         // Stored in cents
+  status          OrderStatus @default(PENDING)
+  createdAt       DateTime    @default(now())
+  
+  items           OrderItem[]
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product @relation(fields: [productId], references: [id])
+  priceAtTime Int     // Snapshot of the price at checkout
+}
