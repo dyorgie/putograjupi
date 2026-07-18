@@ -43,3 +43,9 @@ Run E2E Tests: npx playwright test
 4. Documentation
 
 If you are generating Next.js code, please prioritize reading the local version-matched Next.js documentation (if available in node_modules/next/dist/docs/) before writing code to ensure you do not use deprecated Next.js 13/14 patterns.
+
+5. Database
+### Database Connectivity (Prisma v7)
+- **Singleton Pattern:** We use a Prisma Client singleton in `src/lib/prisma.ts` to prevent exhausting Supabase's database connection limits during Next.js hot-reloads.
+- **Driver Adapter:** Because we are using Prisma v7, we initialize the client using the `@prisma/adapter-pg` driver adapter rather than the legacy built-in engine. 
+- **Connection Strings:** The runtime adapter utilizes the `DATABASE_URL` (which points to the Supabase pooled connection on port 6543).
