@@ -51,7 +51,11 @@ export default async function PortfolioPage({
       {/* Responsive CSS Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {images.map((image) => (
-          <div key={image.id} className="flex flex-col border rounded-lg overflow-hidden shadow-sm">
+            <Link 
+            key={image.id} 
+      href={`/portfolio/${image.id}`}
+      className="flex flex-col border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
+            >
             {/* added bg-gray-100 as a placeholder while images load */}
             <div className="relative w-full h-64 bg-gray-100"> 
               {/* replaced <img> with Next.js <Image> */}
@@ -67,7 +71,7 @@ export default async function PortfolioPage({
               <h2 className="font-semibold text-lg">{image.title}</h2>
               <p className="text-sm text-gray-500">{image.category}</p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </main>
