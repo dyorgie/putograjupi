@@ -97,3 +97,16 @@ GET /api/products (Fetch active products)
 POST /api/checkout (Generates the Stripe checkout session URL)
 
 POST /api/webhooks/stripe (CRITICAL: Stripe secretly talks to this endpoint to tell your database "Payment Successful! Mark order as PAID.")
+
+4. Notes July 20, 2026
+### `/portfolio`
+- **Type:** Server Component
+- **Function:** Main gallery grid. 
+- **Data Fetching:** Uses `prisma.portfolioImage.findMany()`.
+- **Query Parameters:** Accepts `?category=` for filtering. In Next.js 15, `searchParams` is a Promise and must be `await`ed before use.
+
+### `/portfolio/[id]`
+- **Type:** Server Component (Dynamic Route)
+- **Function:** Individual photo detail page displaying high-res image and metadata.
+- **Data Fetching:** Uses `prisma.portfolioImage.findUnique()`.
+- **Dynamic Segments:** In Next.js 15, `params` is a Promise and must be `await`ed (`const { id } = await params;`) before querying the database. Handles invalid IDs using `notFound()`.

@@ -49,3 +49,17 @@ If you are generating Next.js code, please prioritize reading the local version-
 - **Singleton Pattern:** We use a Prisma Client singleton in `src/lib/prisma.ts` to prevent exhausting Supabase's database connection limits during Next.js hot-reloads.
 - **Driver Adapter:** Because we are using Prisma v7, we initialize the client using the `@prisma/adapter-pg` driver adapter rather than the legacy built-in engine. 
 - **Connection Strings:** The runtime adapter utilizes the `DATABASE_URL` (which points to the Supabase pooled connection on port 6543).
+
+6. Notes July 20, 2026
+## Current Project State
+- **Completed Features:** Server-side image gallery, URL-based category filtering (Issue #7), and dynamic image detail pages (Issue #8).
+- **Prisma Schema Reality:** `portfolioImage` contains `id`, `cloudinaryUrl`, `title`, and `category`. **It does NOT contain a `description` field.** Do not attempt to render one.
+
+## Next.js 15 Constraints (CRITICAL)
+- **Params & SearchParams:** Both `params` and `searchParams` in page components are Promises in Next.js 15. They **must** be `await`ed before their properties are accessed.
+- Example: `const resolvedParams = await params; const id = resolvedParams.id;`
+
+## UI/UX Standards
+- Component styling relies on Tailwind CSS.
+- Next.js `<Image>` is mandatory for rendering images.
+- Use Next.js `<Link>` for all internal routing.
